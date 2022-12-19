@@ -1,41 +1,70 @@
-import 'package:weather/data/models/utils/Clouds.dart';
-import 'package:weather/data/models/utils/coord.dart';
-import 'package:weather/data/models/utils/main_weather.dart';
-import 'package:weather/data/models/utils/more_weather_cond.dart';
-import 'package:weather/data/models/utils/rain.dart';
-import 'package:weather/data/models/utils/sys.dart';
-import 'package:weather/data/models/utils/wind.dart';
+import 'package:equatable/equatable.dart';
 
-class WeatherModel{
-  final Coord coord;
-  final List<MoreWeatherCond> weather;
-  final String base;
-  final MainWeather main;
-  final int visibility;
-  final Wind wind;
-  final Rain rain;
-  final Clouds clouds;
-  final int dt;
-  final Sys sys;
-  final int timezone;
-  final int id;
-  final String name;
-  final int cod;
+import '../../domain/entities/weather.dart';
 
-  WeatherModel(
-      {required this.coord,
-      required this.weather,
-      required this.base,
-      required this.main,
-      required this.visibility,
-      required this.wind,
-      required this.rain,
-      required this.clouds,
-      required this.dt,
-      required this.sys,
-      required this.timezone,
-      required this.id,
-      required this.name,
-      required this.cod});
+class WeatherModel extends Equatable {
+  const WeatherModel({
+    required this.cityName,
+    required this.main,
+    required this.description,
+    required this.iconCode,
+    required this.temperature,
+    required this.pressure,
+    required this.humidity,
+  });
 
+  final String cityName;
+  final String main;
+  final String description;
+  final String iconCode;
+  final double temperature;
+  final int pressure;
+  final int humidity;
+
+  factory WeatherModel.fromJson(Map<String, dynamic> json) => WeatherModel(
+    cityName: json['name'],
+    main: json['weather'][0]['main'],
+    description: json['weather'][0]['description'],
+    iconCode: json['weather'][0]['icon'],
+    temperature: json['main']['temp'],
+    pressure: json['main']['pressure'],
+    humidity: json['main']['humidity'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'weather': [
+      {
+        'main': main,
+        'description': description,
+        'icon': iconCode,
+      },
+    ],
+    'main': {
+      'temp': temperature,
+      'pressure': pressure,
+      'humidity': humidity,
+    },
+    'name': cityName,
+  };
+
+  Weather toEntity() => Weather(
+    cityName: cityName,
+    main: main,
+    description: description,
+    iconCode: iconCode,
+    temperature: temperature,
+    pressure: pressure,
+    humidity: humidity,
+  );
+
+  @override
+  List<Object?> get props => [
+    cityName,
+    main,
+    description,
+    iconCode,
+    temperature,
+    pressure,
+    humidity,
+  ];
 }
